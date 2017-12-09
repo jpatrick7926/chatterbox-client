@@ -1,6 +1,7 @@
 $(document).ready(function() {
   var app = {
-    person : {},
+    person: {},
+    rooms: {},
     server: 'http://parse.sfm6.hackreactor.com/chatterbox/classes/messages',
   };
   app.init = function() {
@@ -9,7 +10,7 @@ $(document).ready(function() {
     app.submitButton(); 
     // setInterval(function() {
     //   app.init();
-    // }, 12000);   
+    // }, 20000);   
   }; 
   app.send = function(message) {
     
@@ -31,17 +32,24 @@ $(document).ready(function() {
       success: function (data) {
         app.renderMessage(data);
         app.renderRoomName(data);
-        app.populateRoomNames(data);
+        // app.populateRoomNames(data);
+      },
+      error: function (error) {
+        console.log('this is our error: ', error); 
       }
     });
   };
   app.renderMessage = function(obj) {
     obj.results.forEach(function(person) {
-
-      app.person.roomname = person.roomname; 
-      
+       
       var userName = 'anonymous';
       var textPrompt = 'empty message';
+
+      if (app.rooms[person.roomname] === undefined) {
+        app.rooms[person.roomname] = [{username: person.username, text: person.text}];
+        $('select').append('<option value=' + person.roomname + '>' + person.roomname + '</option>');
+      }
+
       if (person.username !== undefined) {
         userName = app.convertMessage(person.username);
       }
@@ -50,36 +58,20 @@ $(document).ready(function() {
         textPrompt = app.convertMessage(person.text);
       }
       if (textPrompt !== 'empty message' && userName !== 'anonymous') {
-    // if (!userName.includes('<script>') || !textPrompt.includes('</script>')) {
-      $('#chats').append(
-    //   //first section that covers username
-      '<div class="well col-md-3">' +     
-        '<p>' + userName + '</p>' +
-      '</div>' + 
-      // second area that covers text of current username
-      '<div class="well col-md-9">' +     
-        '<p class="left">' + textPrompt + '</p>' +
-      '</div>');
+        app.renderHTML(userName, textPrompt);
       }
     });  
   };
 
-  app.populateRoomNames = function(obj) {
-    var users = obj.results;
-    var rooms = {};
-    users.forEach(function(person) {
-      if (person.roomname === undefined) {
-        person.roomname = 'lobby';
-      }
-      var roomName = person.roomname;
-      if (rooms[roomName] === undefined) {
-        rooms[roomName] = [{username: person.username, text: person.text}];
-        $('select').append('<option value=' + person.roomname + '>' + person.roomname + '</option>');
-      } else {
-        rooms[roomName].push({username: person.username, text: person.text});
-      }
-    });
-    console.log(rooms);
+  app.renderHTML = function(input1, input2) {
+    $('#chats').append(
+      '<div class="well col-md-3">' +     
+        '<p>' + input1 + '</p>' +
+      '</div>' + 
+      
+      '<div class="well col-md-9">' +     
+        '<p class="left">' + input2 + '</p>' +
+      '</div>');
   };
 
   app.renderRoomName = function(obj) {
@@ -113,12 +105,24 @@ $(document).ready(function() {
       app.send(app.person);
     });
   };
-
+  
+  $('select').on('change', function() {
+    var x = $('.dropDownMenu').find( ':selected' ).text();
+    $.ajax({
+      url: app.server,
+      type: 'GET',
+      data: {order: '-createdAt'},
+      contentType: 'application/json',
+      success: function (data) {
+        app.clearMessages();
+        data.results
+          .filter(function(person) { return person.roomname === x; })
+          .forEach(function(person) { app.renderHTML(person.username, person.text); });   
+      }
+    });
+  });  
   app.init();
-
   // setInterval(function() {
   //   app.init();
   // }, 10000);
-
-  
 });
