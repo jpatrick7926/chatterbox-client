@@ -5,7 +5,6 @@
     <title>chatterbox</title>
     <link rel="stylesheet" href="styles/styles.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-
     <!-- dependencies -->
     <script src="bower_components/jquery/dist/jquery.js"></script>
     <script src="bower_components/backbone/backbone.js"></script>
@@ -26,22 +25,27 @@
     <script src="env/config.js"></script>
     <script src="scripts/app.js"></script>
   </head>
-  <body>
-  <div class="jumbotron">
-    <h1>chatterbox</h1>
-    <div class="" id="main">
-      <label for="messageInput"><!--Message--></label>
-      <input type="message" class="form-control" id="message">
-      <button type="submit" class="btn btn-primary" id="buttonPressed">Submit</button>
-    </div>
-    <div class="" id="chats">
-      <h4> Message Box </h4>
-      <div class="container-fluid">  
-        <div class="outputMessage well row col-xs-12">
+<body>
+  <div class="container">
+    <div class="jumbotron well text-center">
+      <h2 id="" class="jumbotron">CHATTER BOX</h2> 
+       <select>
+        <option value="default">lobby</option>
+       </select>
+      
+      <!-- INPUT DATA -->
+      <form action="#" class="form-inline">
+        <div class="input-group">
+          <input type="text" class="form-control" id="searchField" size="200" >
+        <div class="input-group-btn">
+          <button type="button" class="btn btn-primary" id="submitButton"> Submit </button> 
         </div>
-      </div>
+        </div>
+     </form>
     </div>
-    
   </div>
-  </body>
+<div class="container-fluid" id="chats">
+  
+</div>  
+</body>
 </html>
